@@ -1,3 +1,9 @@
+#![allow(non_snake_case)]
+#![allow(non_camel_case_types)]
+#![allow(unused)]
+
+use std::fmt::{Display, Formatter};
+
 /// application-label-af:'AI Chat'
 /// application-label-am:'AI Chat'
 /// application-label-ar:'AI Chat'
@@ -90,6 +96,7 @@
 /// application-label-zh-MO:'AI Chat'
 /// application-label-zh-TW:'AI Chat'
 /// application-label-zu:'AI Chat'
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub(crate) enum Locale {
     DEFAULT,
     AF,
@@ -184,4 +191,15 @@ pub(crate) enum Locale {
     ZH_MO,
     ZH_TW,
     ZU,
+}
+
+impl Display for Locale {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+#[test]
+fn test() {
+    println!("{}", Locale::AF.to_string());
 }
