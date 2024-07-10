@@ -56,7 +56,7 @@ impl AAPT2 {
         let mut target_sdk_version = String::new();
         let mut uses_permissions = Vec::new();
         let mut application_labels = HashMap::new();
-        let mut application_icons = HashMap::new();
+        // let mut application_icons = HashMap::new();
         // let mut application_label = String::new();
         // let mut application_icon = String::new();
         // let mut launchable_activity_name = String::new();
@@ -127,6 +127,6 @@ impl AAPT2 {
 #[test]
 fn aapt2_test() {
     let aapt2 = AAPT2::new();
-    let manifest = aapt2.dump_badging(PathBuf::from("C:\\Users\\luhao\\Desktop\\mm\\AIChat.apk")).expect("");
+    let manifest = aapt2.dump_badging(PathBuf::from("C:\\Users\\luhao\\Desktop\\mm\\77.apk")).expect("");
     println!("manifest => {:#?}", manifest);
 }
