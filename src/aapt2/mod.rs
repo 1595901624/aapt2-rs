@@ -7,6 +7,9 @@ mod win;
 mod linux;
 mod aapt2;
 
+#[cfg(target_os = "macos")]
+mod macos;
+
 #[cfg(target_os = "windows")]
 fn get_exe_path() -> PathBuf {
     return win::get_exe_path();
@@ -15,6 +18,11 @@ fn get_exe_path() -> PathBuf {
 #[cfg(target_os = "linux")]
 fn get_exe_path() -> PathBuf {
     return linux::get_exe_path();
+}
+
+#[cfg(target_os = "macos")]
+fn get_exe_path() -> PathBuf {
+    return macos::get_exe_path();
 }
 
 // /// dump_badging
