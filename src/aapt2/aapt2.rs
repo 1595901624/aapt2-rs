@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 use std::io;
+use std::panic::Location;
 use std::path::PathBuf;
 use std::process::Command;
 
 use crate::aapt2::get_exe_path;
+use crate::model::locale::Locale;
 use crate::model::manifest::Manifest;
 use crate::model::package::Package;
 
@@ -50,11 +52,11 @@ impl AAPT2 {
         let mut platform_build_version_code = String::new();
         let mut compile_sdk_version = String::new();
         let mut compile_sdk_version_codename = String::new();
-        // let mut sdk_version = String::new();
-        // let mut target_sdk_version = String::new();
-        // let mut uses_permissions = Vec::new();
-        // let mut application_labels = HashMap::new();
-        // let mut application_icons = HashMap::new();
+        let mut sdk_version = String::new();
+        let mut target_sdk_version = String::new();
+        let mut uses_permissions = Vec::new();
+        let mut application_labels = HashMap::new();
+        let mut application_icons = HashMap::new();
         // let mut application_label = String::new();
         // let mut application_icon = String::new();
         // let mut launchable_activity_name = String::new();
@@ -82,7 +84,22 @@ impl AAPT2 {
                         _ => {}
                     }
                 }
-            }
+            } else if line.starts_with("application-label:") {
+                let label = line.split(':').nth(1).unwrap().trim_matches('\'').to_string();
+                application_labels.insert(Locale::DEFAULT, label);
+            } else if line.starts_with("application-label-") {
+                let parts: Vec<&str> = line.split(':').collect();
+                let lang = parts[0].split('-').nth(2).unwrap().to_string();
+                let label = parts[1].trim_matches('\'').to_string();
+                application_labels.insert(Locale::from(lang), label);
+            } else if line.starts_with("sdkVersion:") {
+                sdk_version = line.split(':').nth(1).unwrap().trim_matches('\'').to_string();
+            } else if line.starts_with("targetSdkVersion:") {
+                target_sdk_version = line.split(':').nth(1).unwrap().trim_matches('\'').to_string();
+            } else if line.starts_with("uses-permission:") {
+                let permission = line.split("name='").nth(1).unwrap().trim_matches('\'').to_string();
+                uses_permissions.push(permission);
+            } else {}
         }
 
         let package = Package {
@@ -97,7 +114,10 @@ impl AAPT2 {
 
         let manifest = Manifest {
             package,
-            application_label: HashMap::new(),
+            sdk_version,
+            target_sdk_version,
+            uses_permissions,
+            application_labels,
         };
 
         return Ok(manifest);
@@ -108,5 +128,5 @@ impl AAPT2 {
 fn aapt2_test() {
     let aapt2 = AAPT2::new();
     let manifest = aapt2.dump_badging(PathBuf::from("C:\\Users\\luhao\\Desktop\\mm\\AIChat.apk")).expect("");
-    println!("manifest => {:?}", manifest);
+    println!("manifest => {:#?}", manifest);
 }

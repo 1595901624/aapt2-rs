@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-
+use crate::model::locale::Locale;
 use crate::model::package::Package;
 
 ///
@@ -18,5 +18,9 @@ use crate::model::package::Package;
 #[derive(Debug, Deserialize, Serialize)]
 pub(crate) struct Manifest {
     pub(crate) package: Package,
-    pub(crate) application_label: HashMap<String, String>,
+    pub(crate) sdk_version: String,
+    pub(crate) target_sdk_version: String,
+    pub(crate) uses_permissions: Vec<String>,
+    pub(crate) application_labels: HashMap<Locale, String>,
+    // pub(crate) application_icons: HashMap<Locale, String>,
 }
