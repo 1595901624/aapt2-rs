@@ -8,8 +8,7 @@ pub fn add(left: usize, right: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use std::env;
-    use std::path::{Path, PathBuf};
-    use super::*;
+    use std::path::PathBuf;
 
     #[test]
     fn it_works() {

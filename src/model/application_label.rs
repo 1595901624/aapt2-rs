@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+
 use crate::model::locale::Locale;
 
 pub(crate) struct ApplicationLabel {

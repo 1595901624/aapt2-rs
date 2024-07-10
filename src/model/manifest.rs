@@ -1,4 +1,7 @@
-use std::iter::Map;
+use std::collections::HashMap;
+
+use serde::{Deserialize, Serialize};
+
 use crate::model::package::Package;
 
 ///
@@ -12,7 +15,8 @@ use crate::model::package::Package;
 /// application-icon-480:'res/mipmap-xxhdpi-v4/ic_launcher.webp'
 /// application-icon-640:'res/mipmap-xxxhdpi-v4/ic_launcher.webp'
 /// application-icon-65534:'res/mipmap-mdpi-v4/ic_launcher.webp'
+#[derive(Debug, Deserialize, Serialize)]
 pub(crate) struct Manifest {
     pub(crate) package: Package,
-    pub(crate) application_label: Map<String, String>,
+    pub(crate) application_label: HashMap<String, String>,
 }
