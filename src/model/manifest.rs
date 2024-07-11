@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
+use crate::model::density::Density;
 use crate::model::locale::Locale;
 use crate::model::package::Package;
 
@@ -22,5 +23,5 @@ pub(crate) struct Manifest {
     pub(crate) target_sdk_version: String,
     pub(crate) uses_permissions: Vec<String>,
     pub(crate) application_labels: HashMap<Locale, String>,
-    // pub(crate) application_icons: HashMap<Locale, String>,
+    pub(crate) application_icons: HashMap<Density, String>,
 }

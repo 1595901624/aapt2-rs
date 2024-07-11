@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 use std::io;
-use std::panic::Location;
 use std::path::PathBuf;
 use std::process::Command;
 
 use crate::aapt2::get_exe_path;
+use crate::model::density::Density;
 use crate::model::locale::Locale;
 use crate::model::manifest::Manifest;
 use crate::model::package::Package;
@@ -56,7 +56,7 @@ impl AAPT2 {
         let mut target_sdk_version = String::new();
         let mut uses_permissions = Vec::new();
         let mut application_labels = HashMap::new();
-        // let mut application_icons = HashMap::new();
+        let mut application_icons = HashMap::new();
         // let mut application_label = String::new();
         // let mut application_icon = String::new();
         // let mut launchable_activity_name = String::new();
@@ -99,6 +99,11 @@ impl AAPT2 {
             } else if line.starts_with("uses-permission:") {
                 let permission = line.split("name='").nth(1).unwrap().trim_matches('\'').to_string();
                 uses_permissions.push(permission);
+            } else if line.starts_with("application-icon-") {
+                let parts: Vec<&str> = line.split(':').collect();
+                let density = parts[0].split('-').nth(2).unwrap().to_string();
+                let icon = parts[1].trim_matches('\'').to_string();
+                application_icons.insert(Density::from(density), icon);
             } else {}
         }
 
@@ -118,6 +123,7 @@ impl AAPT2 {
             target_sdk_version,
             uses_permissions,
             application_labels,
+            application_icons,
         };
 
         return Ok(manifest);
