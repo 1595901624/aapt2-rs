@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Copy, Clone, Eq, PartialEq, Hash)]
-pub(crate) enum Density {
+pub enum Density {
     LDPI = 120,
     MDPI = 160,
     HDPI = 240,

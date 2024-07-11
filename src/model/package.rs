@@ -9,18 +9,18 @@ use serde::{Deserialize, Serialize};
 /// compileSdkVersion='33'
 /// compileSdkVersionCodename='13'
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct Package {
-    pub(crate) name: String,
+pub struct Package {
+    pub name: String,
     #[serde(rename = "versionName")]
-    pub(crate) version_name: String,
+    pub version_name: String,
     #[serde(rename = "versionCode")]
-    pub(crate) version_code: u32,
+    pub version_code: u32,
     #[serde(rename = "platformBuildVersionName")]
-    pub(crate) platform_build_version_name: String,
+    pub platform_build_version_name: String,
     #[serde(rename = "platformBuildVersionCode")]
-    pub(crate) platform_build_version_code: u32,
+    pub platform_build_version_code: u32,
     #[serde(rename = "compileSdkVersion")]
-    pub(crate) compile_sdk_version: String,
+    pub compile_sdk_version: String,
     #[serde(rename = "compileSdkVersionCodename")]
-    pub(crate) compile_sdk_version_codename: String,
+    pub compile_sdk_version_codename: String,
 }

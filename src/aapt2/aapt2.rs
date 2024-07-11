@@ -7,6 +7,7 @@ use crate::aapt2::get_exe_path;
 use crate::model::application::Application;
 use crate::model::density::Density;
 use crate::model::locale::Locale;
+use crate::model::lunchable_activity::LaunchableActivity;
 use crate::model::manifest::Manifest;
 use crate::model::package::Package;
 
@@ -65,13 +66,11 @@ impl AAPT2 {
         let mut application_labels = HashMap::new();
         let mut application_icons = HashMap::new();
         let mut application = Application::default();
-        // let mut launchable_activity_name = String::new();
-        // let mut launchable_activity_label = String::new();
-        // let mut launchable_activity_icon = String::new();
+        let mut launchable_activity = LaunchableActivity::default();
         // let mut additional_permissions = Vec::new();
         // let mut feature_group_label = String::new();
         // let mut features = Vec::new();
-        // let mut native_code = String::new();
+        let mut native_code = String::new();
 
         for line in input.lines() {
             let line = line.trim();
@@ -124,13 +123,32 @@ impl AAPT2 {
                 for part in line.split_whitespace().skip(1) {
                     let (key, value) = part.split_at(part.find('=').unwrap());
                     let value = value.trim_matches('=').trim_matches('\'');
-                    // match key {
-                    //     "name" => launchable_activity_name = value.to_string(),
-                    //     "label" => launchable_activity_label = value.to_string(),
-                    //     "icon" => launchable_activity_icon = value.to_string(),
-                    //     _ => {}
-                    // }
+                    match key {
+                        "name" => launchable_activity.name = value.to_string(),
+                        "label" => launchable_activity.label = value.to_string(),
+                        "icon" => launchable_activity.icon = value.to_string(),
+                        _ => {}
+                    }
                 }
+                // } else if line.starts_with("uses-implied-feature:") {
+                //     let parts: Vec<&str> = line.split("name='").collect();
+                //     let feature_name = parts[1].split('\'').next().unwrap().to_string();
+                //     let reason = parts[1].split("reason='").nth(1).unwrap().trim_matches('\'').to_string();
+                //     if let Some(feature) = features.iter_mut().find(|f| f.name == feature_name) {
+                //         feature.implied_reason = Some(reason);
+                //     } else {
+                //         features.push(Feature { name: feature_name, required: true, implied_reason: Some(reason) });
+                //     }
+                // } else if line.starts_with("feature-group:") {
+                //     feature_group_label = line.split(':').nth(1).unwrap().trim_matches('\'').to_string();
+                // } else if line.starts_with("uses-feature-not-required:") {
+                //     let feature_name = line.split("name='").nth(1).unwrap().trim_matches('\'').to_string();
+                //     features.push(Feature { name: feature_name, required: false, implied_reason: None });
+                // } else if line.starts_with("uses-feature:") {
+                //     let feature_name = line.split("name='").nth(1).unwrap().trim_matches('\"').to_string();
+                //     features.push(Feature { name: feature_name, required: true, implied_reason: None });
+            } else if line.starts_with("native-code:") {
+                native_code = line.split(':').nth(1).unwrap().trim().to_string();
             } else {}
         }
 
@@ -152,6 +170,8 @@ impl AAPT2 {
             application_labels,
             application_icons,
             application,
+            launchable_activity,
+            native_code,
         };
 
         return Ok(manifest);

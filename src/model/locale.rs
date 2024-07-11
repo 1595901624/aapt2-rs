@@ -98,7 +98,7 @@ use serde::{Deserialize, Serialize};
 /// application-label-zh-TW:'AI Chat'
 /// application-label-zu:'AI Chat'
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub(crate) enum Locale {
+pub enum Locale {
     DEFAULT,
     AF,
     AM,

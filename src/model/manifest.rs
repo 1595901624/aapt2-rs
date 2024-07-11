@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::application::Application;
 use crate::model::density::Density;
 use crate::model::locale::Locale;
+use crate::model::lunchable_activity::LaunchableActivity;
 use crate::model::package::Package;
 
 ///
@@ -41,12 +42,14 @@ use crate::model::package::Package;
 /// densities: '160' '240' '320' '480' '640' '65534'
 /// native-code: 'arm64-v8a'
 #[derive(Debug, Deserialize, Serialize)]
-pub(crate) struct Manifest {
-    pub(crate) package: Package,
-    pub(crate) sdk_version: String,
-    pub(crate) target_sdk_version: String,
-    pub(crate) uses_permissions: Vec<String>,
-    pub(crate) application_labels: HashMap<Locale, String>,
-    pub(crate) application_icons: HashMap<Density, String>,
-    pub(crate) application: Application,
+pub struct Manifest {
+    pub package: Package,
+    pub sdk_version: String,
+    pub target_sdk_version: String,
+    pub uses_permissions: Vec<String>,
+    pub application_labels: HashMap<Locale, String>,
+    pub application_icons: HashMap<Density, String>,
+    pub application: Application,
+    pub launchable_activity: LaunchableActivity,
+    pub native_code: String,
 }

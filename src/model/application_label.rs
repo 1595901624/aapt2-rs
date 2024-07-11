@@ -2,18 +2,18 @@ use std::collections::HashMap;
 
 use crate::model::locale::Locale;
 
-pub(crate) struct ApplicationLabel {
-    pub(crate) map: HashMap<String, String>,
+pub struct ApplicationLabel {
+    pub map: HashMap<String, String>,
 }
 
 impl ApplicationLabel {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         return Self {
             map: HashMap::new(),
         };
     }
 
-    pub(crate) fn get_application_label(&self, locale: Locale) -> String {
+    pub fn get_application_label(&self, locale: Locale) -> String {
         if self.map.get(&self.get_application_label(locale)).is_none() {
             return self.map.get(&self.get_application_label(Locale::DEFAULT)).unwrap().clone();
         }

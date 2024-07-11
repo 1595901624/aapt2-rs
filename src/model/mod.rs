@@ -1,7 +1,8 @@
-pub(crate) mod manifest;
-pub(crate) mod package;
-pub(crate) mod locale;
-pub(crate) mod application_label;
-pub(crate) mod density;
+pub mod manifest;
+pub mod package;
+pub mod locale;
+pub mod application_label;
+pub mod density;
 
-pub(crate) mod application;
+pub mod application;
+pub mod lunchable_activity;
