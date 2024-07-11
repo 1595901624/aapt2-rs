@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use crate::aapt2::get_exe_path;
+use crate::model::application::Application;
 use crate::model::density::Density;
 use crate::model::locale::Locale;
 use crate::model::manifest::Manifest;
@@ -57,8 +58,7 @@ impl AAPT2 {
         let mut uses_permissions = Vec::new();
         let mut application_labels = HashMap::new();
         let mut application_icons = HashMap::new();
-        // let mut application_label = String::new();
-        // let mut application_icon = String::new();
+        let mut application = Application::default();
         // let mut launchable_activity_name = String::new();
         // let mut launchable_activity_label = String::new();
         // let mut launchable_activity_icon = String::new();
@@ -104,6 +104,16 @@ impl AAPT2 {
                 let density = parts[0].split('-').nth(2).unwrap().to_string();
                 let icon = parts[1].trim_matches('\'').to_string();
                 application_icons.insert(Density::from(density), icon);
+            } else if line.starts_with("application:") {
+                for part in line.split_whitespace().skip(1) {
+                    let (key, value) = part.split_at(part.find('=').unwrap());
+                    let value = value.trim_matches('=').trim_matches('\'');
+                    match key {
+                        "label" => application.label = value.to_string(),
+                        "icon" => application.icon = value.to_string(),
+                        _ => {}
+                    }
+                }
             } else {}
         }
 
@@ -124,6 +134,7 @@ impl AAPT2 {
             uses_permissions,
             application_labels,
             application_icons,
+            application,
         };
 
         return Ok(manifest);
