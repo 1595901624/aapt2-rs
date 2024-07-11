@@ -31,13 +31,12 @@ impl AAPT2 {
 
     /// aapt2 dump badging
     /// Print information extracted from the manifest of the APK.
-    pub(crate) fn dump_badging(&self, app_path: PathBuf) -> io::Result<Manifest> {
+    pub fn dump_badging(&self, app_path: PathBuf) -> io::Result<Manifest> {
         let status = Command::new(self.exe_path.as_os_str())
             .arg("dump")
             .arg("badging")
             .arg(app_path.as_os_str())
-            .output()
-            .expect("Failed to execute command");
+            .output()?;
 
         // println!("status => {:#?}", status);
         // println!("status.stdout => {:#?}", String::from_utf8_lossy(&status.stdout));
@@ -51,8 +50,22 @@ impl AAPT2 {
         };
     }
 
+    /// aapt2 dump packagename
+    pub fn dump_packagename(&self, app_path: PathBuf) -> io::Result<String> {
+        let status = Command::new(self.exe_path.as_os_str())
+            .arg("dump")
+            .arg("packagename")
+            .arg(app_path.as_os_str())
+            .output()?;
+        return if status.status.success() {
+            Ok(String::from_utf8_lossy(&status.stdout).trim().to_string())
+        } else {
+            Err(io::Error::new(io::ErrorKind::Other, String::from_utf8_lossy(&status.stderr)))
+        };
+    }
+
     /// aapt2 parse manifest
-    pub(crate) fn parse_manifest(&self, input: String) -> io::Result<Manifest> {
+    fn parse_manifest(&self, input: String) -> io::Result<Manifest> {
         let mut name = String::new();
         let mut version_code = String::new();
         let mut version_name = String::new();
@@ -183,4 +196,11 @@ fn aapt2_test() {
     let aapt2 = AAPT2::new();
     let manifest = aapt2.dump_badging(PathBuf::from("C:\\Users\\luhao\\Desktop\\mm\\77.apk")).expect("");
     println!("manifest => {:#?}", manifest);
+}
+
+#[test]
+fn aapt2_dump_packagename_test() {
+    let aapt2 = AAPT2::new();
+    let package_name = aapt2.dump_packagename(PathBuf::from("C:\\Users\\luhao\\Desktop\\mm\\77.apk")).expect("");
+    println!("package_name => {:#?}", package_name);
 }
