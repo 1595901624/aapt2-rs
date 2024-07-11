@@ -10,15 +10,21 @@ use crate::model::locale::Locale;
 use crate::model::manifest::Manifest;
 use crate::model::package::Package;
 
-struct AAPT2 {
+pub(crate) struct AAPT2 {
     /// aapt2 path
     exe_path: PathBuf,
 }
 
 impl AAPT2 {
-    fn new() -> Self {
+    pub(crate) fn new() -> Self {
         return Self {
             exe_path: get_exe_path()
+        };
+    }
+
+    pub(crate) fn from(exe_path: PathBuf) -> Self {
+        return Self {
+            exe_path
         };
     }
 
@@ -113,6 +119,17 @@ impl AAPT2 {
                         "icon" => application.icon = value.to_string(),
                         _ => {}
                     }
+                }
+            } else if line.starts_with("launchable-activity:") {
+                for part in line.split_whitespace().skip(1) {
+                    let (key, value) = part.split_at(part.find('=').unwrap());
+                    let value = value.trim_matches('=').trim_matches('\'');
+                    // match key {
+                    //     "name" => launchable_activity_name = value.to_string(),
+                    //     "label" => launchable_activity_label = value.to_string(),
+                    //     "icon" => launchable_activity_icon = value.to_string(),
+                    //     _ => {}
+                    // }
                 }
             } else {}
         }
