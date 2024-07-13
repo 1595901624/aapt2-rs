@@ -29,6 +29,19 @@ impl AAPT2 {
         };
     }
 
+    /// Prints the version of aapt.
+    pub fn version(&self) -> io::Result<String> {
+        let status = Command::new(self.exe_path.as_os_str())
+            .arg("version")
+            .output()?;
+
+        return if status.status.success() {
+            Ok(String::from_utf8_lossy(&status.stderr).trim().to_string())
+        } else {
+            Err(io::Error::new(io::ErrorKind::Other, String::from_utf8_lossy(&status.stderr)))
+        };
+    }
+
     /// aapt2 dump badging
     /// Print information extracted from the manifest of the APK.
     pub fn dump_badging(&self, app_path: PathBuf) -> io::Result<Manifest> {
@@ -203,4 +216,11 @@ fn aapt2_dump_packagename_test() {
     let aapt2 = AAPT2::new();
     let package_name = aapt2.dump_packagename(PathBuf::from("C:\\Users\\luhao\\Desktop\\mm\\77.apk")).expect("");
     println!("package_name => {:#?}", package_name);
+}
+
+#[test]
+fn aapt2_dump_version_test() {
+    let aapt2 = AAPT2::new();
+    let version = aapt2.version().expect("");
+    println!("version => {:#?}", version);
 }
