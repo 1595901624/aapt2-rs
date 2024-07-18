@@ -11,7 +11,7 @@ use crate::model::lunchable_activity::LaunchableActivity;
 use crate::model::manifest::Manifest;
 use crate::model::package::Package;
 
-pub(crate) struct AAPT2 {
+pub struct AAPT2 {
     /// aapt2 path
     exe_path: PathBuf,
 }
@@ -23,7 +23,7 @@ impl AAPT2 {
         };
     }
 
-    pub(crate) fn from(exe_path: PathBuf) -> Self {
+    pub fn from(exe_path: PathBuf) -> Self {
         return Self {
             exe_path
         };
