@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 /// platformBuildVersionCode='33'
 /// compileSdkVersion='33'
 /// compileSdkVersionCodename='13'
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Package {
     pub name: String,
     #[serde(rename = "versionName")]
