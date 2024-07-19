@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::io;
 use std::path::PathBuf;
 use std::process::Command;
-
+use regex::Regex;
 use crate::aapt2::get_exe_path;
 use crate::model::application::Application;
 use crate::model::density::Density;
@@ -136,15 +136,25 @@ impl AAPT2 {
                 let icon = parts[1].trim_matches('\'').to_string();
                 application_icons.insert(Density::from(density), icon);
             } else if line.starts_with("application:") {
-                for part in line.split_whitespace().skip(1) {
-                    let (key, value) = part.split_at(part.find('=').unwrap());
-                    let value = value.trim_matches('=').trim_matches('\'');
-                    match key {
-                        "label" => application.label = value.to_string(),
-                        "icon" => application.icon = value.to_string(),
+                // for part in line.split_whitespace().skip(1) {
+                //     let (key, value) = part.split_at(part.find('=').unwrap());
+                //     let value = value.trim_matches('=').trim_matches('\'');
+                //     match key {
+                //         "label" => application.label = value.to_string(),
+                //         "icon" => application.icon = value.to_string(),
+                //         _ => {}
+                //     }
+                // }
+                let re = Regex::new(r"(\w+)='([^']*)'").unwrap();
+                for cap in re.captures_iter(line) {
+                    // map.insert(cap[1].to_string(), cap[2].to_string());
+                    match cap[1].to_string().as_str() {
+                        "label" => application.label = cap[2].to_string(),
+                        "icon" => application.icon = cap[2].to_string(),
                         _ => {}
                     }
                 }
+
             } else if line.starts_with("launchable-activity:") {
                 for part in line.split_whitespace().skip(1) {
                     let (key, value) = part.split_at(part.find('=').unwrap());
