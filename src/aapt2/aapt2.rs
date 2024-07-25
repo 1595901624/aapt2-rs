@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 use std::io;
-use std::os::windows::process::CommandExt;
 use std::path::PathBuf;
 use std::process::Command;
+
 use regex::Regex;
+
 use crate::aapt2::get_exe_path;
 use crate::model::application::Application;
 use crate::model::density::Density;
@@ -32,10 +33,13 @@ impl AAPT2 {
 
     /// Prints the version of aapt.
     pub fn version(&self) -> io::Result<String> {
-        let status = Command::new(self.exe_path.as_os_str())
-            .arg("version")
-            .creation_flags(0x08000000)
-            .output()?;
+        let mut command = Command::new(self.exe_path.as_os_str());
+        let mut status = command.arg("version");
+        if cfg!(target_os = "windows") {
+            use std::os::windows::process::CommandExt;
+            status = status.creation_flags(0x08000000);
+        }
+        let status = status.output()?;
 
         return if status.status.success() {
             Ok(String::from_utf8_lossy(&status.stderr).trim().to_string())
@@ -47,16 +51,16 @@ impl AAPT2 {
     /// aapt2 dump badging
     /// Print information extracted from the manifest of the APK.
     pub fn dump_badging(&self, app_path: PathBuf) -> io::Result<Manifest> {
-        let status = Command::new(self.exe_path.as_os_str())
-            .arg("dump")
+        let mut command = Command::new(self.exe_path.as_os_str());
+        let mut status = command.arg("dump")
             .arg("badging")
-            .creation_flags(0x08000000)
-            .arg(app_path.as_os_str())
-            .output()?;
+            .arg(app_path.as_os_str());
 
-        // println!("status => {:#?}", status);
-        // println!("status.stdout => {:#?}", String::from_utf8_lossy(&status.stdout));
-        // println!("status.stderr => {:#?}", String::from_utf8_lossy(&status.stderr));
+        if cfg!(target_os = "windows") {
+            use std::os::windows::process::CommandExt;
+            status = status.creation_flags(0x08000000);
+        }
+        let status = status.output()?;
 
         return if status.status.success() {
             let manifest = self.parse_manifest(String::from_utf8_lossy(&status.stdout).to_string())?;
@@ -68,12 +72,17 @@ impl AAPT2 {
 
     /// aapt2 dump packagename
     pub fn dump_packagename(&self, app_path: PathBuf) -> io::Result<String> {
-        let status = Command::new(self.exe_path.as_os_str())
-            .arg("dump")
+        let mut command = Command::new(self.exe_path.as_os_str());
+        let mut status = command.arg("dump")
             .arg("packagename")
-            .arg(app_path.as_os_str())
-            .creation_flags(0x08000000)
-            .output()?;
+            .arg(app_path.as_os_str());
+
+        if cfg!(target_os = "windows") {
+            use std::os::windows::process::CommandExt;
+            status = status.creation_flags(0x08000000);
+        }
+        let status = status.output()?;
+
         return if status.status.success() {
             Ok(String::from_utf8_lossy(&status.stdout).trim().to_string())
         } else {
@@ -158,7 +167,6 @@ impl AAPT2 {
                         _ => {}
                     }
                 }
-
             } else if line.starts_with("launchable-activity:") {
                 for part in line.split_whitespace().skip(1) {
                     let (key, value) = part.split_at(part.find('=').unwrap());
