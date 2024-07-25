@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::io;
+use std::os::windows::process::CommandExt;
 use std::path::PathBuf;
 use std::process::Command;
 use regex::Regex;
@@ -33,6 +34,7 @@ impl AAPT2 {
     pub fn version(&self) -> io::Result<String> {
         let status = Command::new(self.exe_path.as_os_str())
             .arg("version")
+            .creation_flags(0x08000000)
             .output()?;
 
         return if status.status.success() {
@@ -48,6 +50,7 @@ impl AAPT2 {
         let status = Command::new(self.exe_path.as_os_str())
             .arg("dump")
             .arg("badging")
+            .creation_flags(0x08000000)
             .arg(app_path.as_os_str())
             .output()?;
 
@@ -69,6 +72,7 @@ impl AAPT2 {
             .arg("dump")
             .arg("packagename")
             .arg(app_path.as_os_str())
+            .creation_flags(0x08000000)
             .output()?;
         return if status.status.success() {
             Ok(String::from_utf8_lossy(&status.stdout).trim().to_string())
