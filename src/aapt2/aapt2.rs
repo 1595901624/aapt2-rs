@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::io;
 use std::path::PathBuf;
 use std::process::Command;
@@ -101,7 +101,7 @@ impl AAPT2 {
         let mut compile_sdk_version_codename = String::new();
         let mut sdk_version = String::new();
         let mut target_sdk_version = String::new();
-        let mut uses_permissions = Vec::new();
+        let mut uses_permissions = HashSet::new();
         let mut application_labels = HashMap::new();
         let mut application_icons = HashMap::new();
         let mut application = Application::default();
@@ -142,7 +142,7 @@ impl AAPT2 {
                 target_sdk_version = line.split(':').nth(1).unwrap().trim_matches('\'').to_string();
             } else if line.starts_with("uses-permission:") {
                 let permission = line.split("name='").nth(1).unwrap().trim_matches('\'').to_string();
-                uses_permissions.push(permission);
+                uses_permissions.insert(permission);
             } else if line.starts_with("application-icon-") {
                 let parts: Vec<&str> = line.split(':').collect();
                 let density = parts[0].split('-').nth(2).unwrap().to_string();
@@ -209,6 +209,9 @@ impl AAPT2 {
             compile_sdk_version,
             compile_sdk_version_codename,
         };
+
+        // convert to vector
+        let uses_permissions = uses_permissions.into_iter().collect::<Vec<String>>();
 
         let manifest = Manifest {
             package,
